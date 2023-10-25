@@ -43,7 +43,7 @@ const Table = () => {
     }, [pageNumber, offset, openModal]);
 
     if (!existUser) {
-        return router.replace('/')
+        return router.push('/')
     }
 
     return (

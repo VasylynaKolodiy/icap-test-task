@@ -34,7 +34,7 @@ export default function Home() {
 
     useEffect(() => {
         if (loginResult?.message) {
-            router.replace('/table');
+            router.push('/table');
         }
     }, [loginResult]);
 
