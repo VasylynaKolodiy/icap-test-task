@@ -45,7 +45,7 @@ const Table = () => {
 
     useEffect(() => {
         if (!existUser) router.push('/')
-    }, []);
+    }, [existUser]);
 
     return (
         <main className='table'>
