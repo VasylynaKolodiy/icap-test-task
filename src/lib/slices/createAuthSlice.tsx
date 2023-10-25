@@ -2,7 +2,7 @@ import {StateCreator} from "zustand";
 import {IAuth} from "../../models/interfaces";
 
 export interface IAuthSlice {
-    loginResult: object;
+    loginResult: IAuth | {};
     fetchLogin: (data: IAuth) => void;
     removeUserData: () => void;
 }
