@@ -2,6 +2,7 @@ import {StateCreator} from "zustand";
 import {ITable} from "../../models/interfaces";
 
 export interface IInitialUser {
+    id?: number;
     name: string | null;
     email: string;
     birthday_date: string;
