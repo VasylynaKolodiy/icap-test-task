@@ -42,9 +42,10 @@ const Table = () => {
         fetchTable(String(LIMIT), String(offset))
     }, [pageNumber, offset, openModal]);
 
-    if (!existUser) {
-        return router.push('/')
-    }
+
+    useEffect(() => {
+        if (!existUser) router.push('/')
+    }, []);
 
     return (
         <main className='table'>
