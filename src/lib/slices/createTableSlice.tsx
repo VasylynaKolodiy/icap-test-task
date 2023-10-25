@@ -13,7 +13,7 @@ export interface IInitialUser {
 export interface ITableSlice {
     table: ITable;
     fetchTable: (limit: string, offset: string) => void;
-    user: IInitialUser;
+    user: IInitialUser | {};
     addUser: (data: IInitialUser) => void;
     removeInfo: () => void;
     editUser: (id: number, data:IInitialUser) => void;
