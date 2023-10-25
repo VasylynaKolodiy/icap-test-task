@@ -19,7 +19,6 @@ const Table = () => {
     const [currentUser, setCurrentUser] = useState(null)
 
     const handlePageChange = (event, value) => {
-        console.log('handlePageChange')
         setPageNumber(value);
         setOffset(LIMIT * (value) - LIMIT)
     }

@@ -75,7 +75,6 @@ export default function Home() {
                     {loginResult.error && <p className='login__error'>{loginResult.error}</p>}
                 </div>
 
-
                 <Button
                     type='submit'
                     variant="outlined"
