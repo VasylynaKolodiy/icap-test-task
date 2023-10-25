@@ -1,0 +1,74 @@
+.modal {
+
+  &__close {
+    cursor: pointer;
+
+    &:hover {
+      & svg path {
+        fill: dodgerblue;
+      }
+    }
+
+    & svg {
+      width: 15px;
+      height: 15px;
+
+      & path {
+        transition: .3s linear;
+      }
+    }
+  }
+
+  &__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__inputs-item{
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  &__error{
+    position: absolute;
+    color: #d32f2f;
+    margin: 15px 0 0;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.66;
+    letter-spacing: 0.03333em;
+  }
+}
+
+.MuiPaper-root{
+  width: 90%;
+}
+
+.MuiTypography-root {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.MuiTypography-body1.MuiDialogContentText-root {
+  margin-bottom: 30px;
+}
+
+.MuiDialogActions-root.MuiDialogActions-spacing {
+  padding: 30px;
+}
+
+.MuiTextField-root{
+  width: 100%;
+}
+
+.MuiFormHelperText-root.Mui-error{
+  position: absolute;
+  bottom: -20px;
+}
+
+body{
+  padding-right: 0 !important;
+}

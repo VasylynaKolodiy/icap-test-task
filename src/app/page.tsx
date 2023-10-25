@@ -1,95 +1,89 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+'use client'
+import './page.scss'
+import {IconButton} from "@mui/material";
+import {useEffect, useState} from "react";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Button from "@mui/material/Button";
+import {useAppStore} from "../lib/store/store";
+import {useRouter} from "next/navigation";
+import {TextValidator, ValidatorForm} from "react-material-ui-form-validator";
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    const [isVisiblePassword, setIsVisiblePassword] = useState(false);
+    const {loginResult, fetchLogin, removeUserData} = useAppStore();
+    const router = useRouter();
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    let [loginData, setLoginData] = useState({
+        username: '',
+        password: '',
+    })
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+    const handleSetIsVisiblePassword = () => {
+        setIsVisiblePassword(!isVisiblePassword);
+    };
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
+    const login = async (event) => {
+        event.preventDefault();
+        fetchLogin(loginData)
+    }
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    useEffect(() => {
+        if (loginResult?.message) {
+            router.replace('/table');
+        }
+    }, [loginResult]);
+
+    return (
+        <main className='login'>
+            <ValidatorForm className='login__form' onSubmit={(event) => login(event)}>
+                <TextValidator
+                    className='login__input login__input-username'
+                    value={loginData.username}
+                    name='username'
+                    type='text'
+                    label='Username'
+                    variant="standard"
+                    onChange={(event) => setLoginData({...loginData, username: event.target.value})}
+                    validators={['required', 'maxStringLength:150']}
+                    errorMessages={['Required field.', 'Max length is 150 characters.']}
+                />
+
+                <div className='login__password'>
+                    <TextValidator
+                        className='login__input login__input-password'
+                        value={loginData.password}
+                        name='password'
+                        type={isVisiblePassword ? 'text' : 'password'}
+                        label='Password'
+                        variant="standard"
+                        onChange={(event) => setLoginData({...loginData, password: event.target.value})}
+                        validators={['required', 'maxStringLength:128']}
+                        errorMessages={['Required field.', 'Max length is 128 characters.']}
+                    />
+                    <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleSetIsVisiblePassword}
+                        onMouseDown={handleMouseDownPassword}
+                    >
+                        {isVisiblePassword ? <VisibilityOff/> : <Visibility/>}
+                    </IconButton>
+                    {loginResult.error && <p className='login__error'>{loginResult.error}</p>}
+                </div>
+
+
+                <Button
+                    type='submit'
+                    variant="outlined"
+                    onClick={() => removeUserData()}
+                >Login
+                </Button>
+            </ValidatorForm>
+
+        </main>
+    )
 }

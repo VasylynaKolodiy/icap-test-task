@@ -1,0 +1,64 @@
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rem;
+  min-height: 100vh;
+
+  &__form {
+    width: 60%;
+    min-width: 400px;
+    margin: 150px auto 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    justify-content: center;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, 0.16) 0 10px 36px 0, rgba(0, 0, 0, 0.06) 0 0 0 1px;
+    padding: 50px;
+
+    & > div {
+      width: 90%;
+      min-width: 350px;
+    }
+  }
+
+  &__error {
+    position: absolute;
+    color: #d32f2f;
+    margin: 15px 0 0;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.66;
+    letter-spacing: 0.03333em;
+  }
+
+  &__input {
+    width: 100%;
+  }
+
+  &__password {
+    position: relative;
+
+    & button {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: 10;
+    }
+
+  }
+
+  .login__input-password .MuiOutlinedInput-input {
+    padding-right: 60px;
+  }
+
+  .MuiFormHelperText-root.Mui-error{
+    position: absolute;
+    bottom: -20px;
+  }
+
+
+}
