@@ -13,7 +13,7 @@ const Table = () => {
     let [offset, setOffset] = useState(0)
     let [pageNumber, setPageNumber] = useState(1);
     let countOfPages = table ? table?.count && Math.ceil(table?.count / LIMIT) : 0;
-    let [existUser, setExistUser] = useState(window.localStorage.getItem('user'))
+    let [existUser, setExistUser] = useState((typeof window !== 'undefined') && localStorage.getItem('user') || null)
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false)
     const [currentUser, setCurrentUser] = useState(null)
@@ -24,9 +24,9 @@ const Table = () => {
     }
 
     const handleRemoveUserData = () => {
-        window.localStorage.removeItem('user');
+        if (typeof window !== 'undefined') {localStorage.removeItem('user');}
         removeUserData();
-        setExistUser(window.localStorage.getItem('user'));
+        setExistUser( (typeof window !== 'undefined') && localStorage.getItem('user'));
     }
 
     const handleOpenModal = () => {

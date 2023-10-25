@@ -19,7 +19,7 @@ export const createAuthSlice: StateCreator<IAuthSlice> = (set) => ({
                 body: JSON.stringify(data),
             });
             if (res.status === 200) {
-                window.localStorage.setItem('user', 'exist');
+                if (typeof window !== 'undefined') {localStorage.setItem('user', 'exist')};
                 set({loginResult: await res.json()});
             } else {
                 set({loginResult: await res.json()});
