@@ -11,7 +11,7 @@ import {TextValidator, ValidatorForm} from "react-material-ui-form-validator";
 
 export default function Home() {
     const [isVisiblePassword, setIsVisiblePassword] = useState(false);
-    const {loginResult, fetchLogin, removeUserData} = useAppStore();
+    const {loginResult, getLogin, clearLoginResult} = useAppStore();
     const router = useRouter();
 
     let [loginData, setLoginData] = useState({
@@ -29,7 +29,7 @@ export default function Home() {
 
     const login = async (event) => {
         event.preventDefault();
-        fetchLogin(loginData)
+        getLogin(loginData)
     }
 
     useEffect(() => {
@@ -78,7 +78,7 @@ export default function Home() {
                 <Button
                     type='submit'
                     variant="outlined"
-                    onClick={() => removeUserData()}
+                    onClick={() => clearLoginResult()}
                 >Login
                 </Button>
             </ValidatorForm>

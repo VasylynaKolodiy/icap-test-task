@@ -1,15 +1,15 @@
 import {StateCreator} from "zustand";
 import {IAuth} from "../../models/interfaces";
 
-export interface IAuthSlice {
+export interface ILoginSlice {
     loginResult: any | {};
-    fetchLogin: (data: IAuth) => void;
-    removeUserData: () => void;
+    getLogin: (data: IAuth) => void;
+    clearLoginResult: () => void;
 }
 
-export const createAuthSlice: StateCreator<IAuthSlice> = (set) => ({
+export const createLoginSlice: StateCreator<ILoginSlice> = (set) => ({
     loginResult: {},
-    fetchLogin: async (data) => {
+    getLogin: async (data) => {
         try {
             const res = await fetch('https://technical-task-api.icapgroupgmbh.com/api/login/', {
                 method: 'POST',
@@ -19,7 +19,7 @@ export const createAuthSlice: StateCreator<IAuthSlice> = (set) => ({
                 body: JSON.stringify(data),
             });
             if (res.status === 200) {
-                if (typeof window !== 'undefined') {localStorage.setItem('user', 'exist')};
+                if (typeof window !== 'undefined') {localStorage.setItem('user', 'exist')}
                 set({loginResult: await res.json()});
             } else {
                 set({loginResult: await res.json()});
@@ -29,7 +29,7 @@ export const createAuthSlice: StateCreator<IAuthSlice> = (set) => ({
         }
     },
 
-    removeUserData: () => {
+    clearLoginResult: () => {
         set({loginResult: {}});
     },
 });

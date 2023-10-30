@@ -1,11 +1,11 @@
 import {create} from 'zustand'
-import {createAuthSlice, IAuthSlice} from "../slices/createAuthSlice";
+import {createLoginSlice, ILoginSlice} from "../slices/createLoginSlice";
 import {createTableSlice, ITableSlice} from "../slices/createTableSlice";
 
 
-type StoreState = IAuthSlice & ITableSlice
+type StoreState = ILoginSlice & ITableSlice
 
 export const useAppStore = create<StoreState>()((...a) => ({
-    ...createAuthSlice(...a),
+    ...createLoginSlice(...a),
     ...createTableSlice(...a),
 }))

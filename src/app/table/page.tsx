@@ -8,25 +8,25 @@ import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
 
 const Table = () => {
-    const {table, fetchTable, removeUserData} = useAppStore();
+    const {table, getTable, clearLoginResult} = useAppStore();
     const LIMIT = 10;
     let [offset, setOffset] = useState(0)
     let [pageNumber, setPageNumber] = useState(1);
     let countOfPages = table ? table?.count && Math.ceil(table?.count / LIMIT) : 0;
-    let [existUser, setExistUser] = useState((typeof window !== 'undefined') && localStorage.getItem('user') || null)
+    let [existUser, setExistRow] = useState((typeof window !== 'undefined') && localStorage.getItem('user') || null)
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false)
-    const [currentUser, setCurrentUser] = useState(null)
+    const [currentRow, setCurrentRow] = useState(null)
 
     const handlePageChange = (event, value) => {
         setPageNumber(value);
         setOffset(LIMIT * (value) - LIMIT)
     }
 
-    const handleRemoveUserData = () => {
+    const handleClearLoginResult = () => {
         if (typeof window !== 'undefined') {localStorage.removeItem('user');}
-        removeUserData();
-        setExistUser( (typeof window !== 'undefined') && localStorage.getItem('user'));
+        clearLoginResult();
+        setExistRow( (typeof window !== 'undefined') && localStorage.getItem('user'));
     }
 
     const handleOpenModal = () => {
@@ -35,11 +35,11 @@ const Table = () => {
 
     const handleOpenEditModal = (user) => {
         setOpenModal(true)
-        setCurrentUser(user)
+        setCurrentRow(user)
     }
 
     useEffect(() => {
-        fetchTable(String(LIMIT), String(offset))
+        getTable(String(LIMIT), String(offset))
     }, [pageNumber, offset, openModal]);
 
 
@@ -54,7 +54,7 @@ const Table = () => {
                     <div className='table__top'>
                         <h1 className='table__title'>Table</h1>
                         <Button variant="outlined" onClick={() => handleOpenModal()}>ADD</Button>
-                        <Button variant="outlined" onClick={() => handleRemoveUserData()}>Logout</Button>
+                        <Button variant="outlined" onClick={() => handleClearLoginResult()}>Logout</Button>
                     </div>
 
                     <table className='table__body'>
@@ -105,8 +105,8 @@ const Table = () => {
             {openModal && (
                 <Modal
                     setOpenModal={setOpenModal}
-                    currentUser={currentUser}
-                    setCurrentUser={setCurrentUser}
+                    currentRow={currentRow}
+                    setCurrentRow={setCurrentRow}
                 />
             )}
         </main>

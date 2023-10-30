@@ -1,22 +1,13 @@
 import {StateCreator} from "zustand";
-import {ITable} from "../../models/interfaces";
-
-export interface IInitialUser {
-    id?: number;
-    name: string | null;
-    email: string;
-    birthday_date: string;
-    phone_number: string;
-    address: string;
-}
+import {IRow, ITable} from "../../models/interfaces";
 
 export interface ITableSlice {
     table: ITable;
-    fetchTable: (limit: string, offset: string) => void;
-    user: IInitialUser | any;
-    addUser: (data: IInitialUser) => void;
-    removeInfo: () => void;
-    editUser: (id: number, data:IInitialUser) => void;
+    getTable: (limit: string, offset: string) => void;
+    row: IRow | any;
+    addRow: (data: IRow) => void;
+    clearRow: () => void;
+    editRow: (id: number, data: IRow) => void;
 }
 
 export const createTableSlice: StateCreator<ITableSlice> = (set) => ({
@@ -27,47 +18,47 @@ export const createTableSlice: StateCreator<ITableSlice> = (set) => ({
         results: []
     },
 
-    user: {
+    row: {
         name: null,
         email: '',
         birthday_date: '',
         phone_number: '',
         address: '',
     },
-    
-    fetchTable: async (limit, offset) => {
-        const res = await fetch(`https://technical-task-api.icapgroupgmbh.com/api/table/?limit=${limit}&offset=${offset}`, {
+
+    getTable: async (limit, offset) => {
+        const result = await fetch(`https://technical-task-api.icapgroupgmbh.com/api/table/?limit=${limit}&offset=${offset}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
-        set({table: await res.json()});
+        set({table: await result.json()});
     },
 
-    addUser: async (data) => {
-        const res = await fetch('https://technical-task-api.icapgroupgmbh.com/api/table/', {
+    addRow: async (data) => {
+        const result = await fetch('https://technical-task-api.icapgroupgmbh.com/api/table/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
         });
-        set({user: await res.json()});
+        set({row: await result.json()});
     },
 
-    removeInfo: () => {
-        set({user: {}});
+    clearRow: () => {
+        set({row: {}});
     },
 
-    editUser: async (id, data) => {
-        const res = await fetch(`https://technical-task-api.icapgroupgmbh.com/api/table/${id}/`, {
+    editRow: async (id, data) => {
+        const result = await fetch(`https://technical-task-api.icapgroupgmbh.com/api/table/${id}/`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
         });
-        set({user: await res.json()});
+        set({row: await result.json()});
     },
 });

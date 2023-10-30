@@ -3,8 +3,8 @@ export interface IAuth {
     password: string
 }
 
-export interface IUser {
-    id: number
+export interface IRow {
+    id?: number
     name: string
     email: string
     birthday_date: string
@@ -16,7 +16,7 @@ export interface ITable {
     count: number
     next: string
     previous: string
-    results: IUser[]
+    results: IRow[]
 }
 
 
