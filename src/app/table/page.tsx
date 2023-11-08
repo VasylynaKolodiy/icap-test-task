@@ -3,9 +3,11 @@ import "./table.scss"
 import {useAppStore} from "../../lib/store/store";
 import {useEffect, useState} from "react";
 import {Button, Pagination} from "@mui/material";
-import {useRouter} from "next/navigation";
 import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
+import {useActions} from "../../hooks/actions";
+import {useGetTable1Query} from "../../redux/features/table.api";
+import {useAppSelector} from "../../hooks/redux";
 
 const Table = () => {
     const {table, getTable, clearLoginResult} = useAppStore();
@@ -14,9 +16,11 @@ const Table = () => {
     let [pageNumber, setPageNumber] = useState(1);
     let countOfPages = table ? table?.count && Math.ceil(table?.count / LIMIT) : 0;
     let [existUser, setExistRow] = useState((typeof window !== 'undefined') && localStorage.getItem('user') || null)
-    const router = useRouter();
+    // const router = useRouter();
     const [openModal, setOpenModal] = useState(false)
     const [currentRow, setCurrentRow] = useState(null)
+
+
 
     const handlePageChange = (event, value) => {
         setPageNumber(value);
@@ -43,9 +47,16 @@ const Table = () => {
     }, [pageNumber, offset, openModal]);
 
 
-    useEffect(() => {
-        if (!existUser) router.push('/')
-    }, [existUser]);
+    const {data: table1} = useGetTable1Query(String(LIMIT), String(offset), {refetchOnMountOrArgChange: true})
+    const {setTable} = useActions()
+    setTable(table1)
+    // const myTable = useAppSelector((state) => state.data.table);
+    // console.log('myTable', myTable)
+
+
+    // useEffect(() => {
+    //     if (!existUser) router.push('/')
+    // }, [existUser]);
 
     return (
         <main className='table'>

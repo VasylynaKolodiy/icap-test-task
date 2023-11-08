@@ -19,4 +19,10 @@ export interface ITable {
     results: IRow[]
 }
 
+export interface ILoginResult {
+    data?: string
+    error?: string
+}
+
+
 

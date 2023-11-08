@@ -1,17 +1,20 @@
 'use client'
+import React from "react";
 import './page.scss'
 import {IconButton} from "@mui/material";
 import {useEffect, useState} from "react";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Button from "@mui/material/Button";
-import {useAppStore} from "../lib/store/store";
-import {useRouter} from "next/navigation";
 import {TextValidator, ValidatorForm} from "react-material-ui-form-validator";
+import {useRouter} from "next/navigation";
+import {usePostLoginMutation} from "../redux/features/table.api";
+import {ILoginResult} from "../models/interfaces";
 
 export default function Home() {
     const [isVisiblePassword, setIsVisiblePassword] = useState(false);
-    const {loginResult, getLogin, clearLoginResult} = useAppStore();
+    const [postLogin, {data}] = usePostLoginMutation();
+    const [loginResult, setLoginResult] = useState<ILoginResult>({});
     const router = useRouter();
 
     let [loginData, setLoginData] = useState({
@@ -23,24 +26,27 @@ export default function Home() {
         setIsVisiblePassword(!isVisiblePassword);
     };
 
-    const handleMouseDownPassword = (event) => {
+    const handleLogin = async (event) => {
         event.preventDefault();
+        try {
+            const result = await postLogin(loginData);
+            setLoginResult(result);
+            console.log('POST LOGIN RESULT - ', result)
+        } catch (err) {
+            console.error(err);
+        }
     };
 
-    const login = async (event) => {
-        event.preventDefault();
-        getLogin(loginData)
-    }
-
     useEffect(() => {
-        if (loginResult?.message) {
+        if (loginResult?.data) {
+            if (typeof window !== 'undefined') {localStorage.setItem('user', 'exist')}
             router.push('/table');
         }
     }, [loginResult]);
 
     return (
         <main className='login'>
-            <ValidatorForm className='login__form' onSubmit={(event) => login(event)}>
+            <ValidatorForm className='login__form' onSubmit={(event) => handleLogin(event)}>
                 <TextValidator
                     className='login__input login__input-username'
                     value={loginData.username}
@@ -65,24 +71,17 @@ export default function Home() {
                         validators={['required', 'maxStringLength:128']}
                         errorMessages={['Required field.', 'Max length is 128 characters.']}
                     />
-                    <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleSetIsVisiblePassword}
-                        onMouseDown={handleMouseDownPassword}
-                    >
+                    <IconButton aria-label="toggle password visibility" onClick={handleSetIsVisiblePassword}>
                         {isVisiblePassword ? <VisibilityOff/> : <Visibility/>}
                     </IconButton>
-                    {loginResult.error && <p className='login__error'>{loginResult.error}</p>}
+
+                    {loginResult?.error && (
+                        <p className='login__error'>{loginResult.error?.data?.error}</p>
+                    )}
                 </div>
 
-                <Button
-                    type='submit'
-                    variant="outlined"
-                    onClick={() => clearLoginResult()}
-                >Login
-                </Button>
+                <Button type='submit' variant="outlined">Login</Button>
             </ValidatorForm>
-
         </main>
     )
 }
