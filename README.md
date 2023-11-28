@@ -1,5 +1,14 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+##Technologies:
+React, Redux toolkit, Next.js
+
+##Login: 
+testuser
+
+##Password: 
+testpassword123
+
 ## Getting Started
 
 First, run the development server:
