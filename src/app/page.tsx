@@ -2,22 +2,25 @@
 import React from "react";
 import './page.scss'
 import {IconButton} from "@mui/material";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Button from "@mui/material/Button";
 import {TextValidator, ValidatorForm} from "react-material-ui-form-validator";
 import {useRouter} from "next/navigation";
 import {usePostLoginMutation} from "../redux/features/table.api";
+import {useActions} from "../hooks/actions";
+import {useAppSelector} from "../hooks/redux";
 import {ILoginResult} from "../models/interfaces";
 
 export default function Home() {
     const [isVisiblePassword, setIsVisiblePassword] = useState(false);
-    const [postLogin, {data}] = usePostLoginMutation();
-    const [loginResult, setLoginResult] = useState<ILoginResult>({});
+    const [postLogin] = usePostLoginMutation({refetchOnMountOrArgChange: true});
+    const {setLoginResult} = useActions();
+    const loginResult = useAppSelector<ILoginResult>((state) => state.table.login);
     const router = useRouter();
 
-    let [loginData, setLoginData] = useState({
+    const [loginData, setLoginData] = useState({
         username: '',
         password: '',
     })
@@ -31,18 +34,16 @@ export default function Home() {
         try {
             const result = await postLogin(loginData);
             setLoginResult(result);
-            console.log('POST LOGIN RESULT - ', result)
+            if (result.data) {
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('user', 'exist');
+                }
+                router.push('/table');
+            }
         } catch (err) {
-            console.error(err);
+            console.log('ERROR - ', err);
         }
     };
-
-    useEffect(() => {
-        if (loginResult?.data) {
-            if (typeof window !== 'undefined') {localStorage.setItem('user', 'exist')}
-            router.push('/table');
-        }
-    }, [loginResult]);
 
     return (
         <main className='login'>
@@ -76,7 +77,7 @@ export default function Home() {
                     </IconButton>
 
                     {loginResult?.error && (
-                        <p className='login__error'>{loginResult.error?.data?.error}</p>
+                        <p className='login__error'>{loginResult.error.data.error}</p>
                     )}
                 </div>
 

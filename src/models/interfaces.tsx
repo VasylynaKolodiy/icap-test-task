@@ -20,9 +20,6 @@ export interface ITable {
 }
 
 export interface ILoginResult {
-    data?: string
-    error?: string
+    data?: object
+    error?: object
 }
-
-
-

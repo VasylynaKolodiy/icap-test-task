@@ -1,33 +1,31 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {ITable} from "../../models/interfaces";
+import {ILoginResult, IRow} from "../../models/interfaces";
 
 const initialState = {
-    table: {
-        count: 0,
-        next: '',
-        previous: '',
-        results: []
-    },
-
-    row: {
-        name: null,
-        email: '',
-        birthday_date: '',
-        phone_number: '',
-        address: '',
-    },
+    login: {},
+    table: {},
+    row: {},
 }
 
 export const tableSlice = createSlice({
     name: "tableName",
     initialState,
     reducers: {
-
-        setTable(state, action: PayloadAction<ITable>) {
-            state.table = action.payload;
+        setLoginResult(state, action: PayloadAction<ILoginResult>) {
+            state.login = action.payload;
         },
 
+        clearLoginResult(state) {
+            state.login = {};
+        },
 
+        setRow(state, action: PayloadAction<IRow>) {
+            state.row = action.payload;
+        },
+
+        clearRow(state) {
+            state.row = {};
+        },
     }
 })
 

@@ -1,66 +1,56 @@
 'use client'
 import "./table.scss"
-import {useAppStore} from "../../lib/store/store";
 import {useEffect, useState} from "react";
 import {Button, Pagination} from "@mui/material";
 import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
+import {useGetTableQuery} from "../../redux/features/table.api";
+import {useRouter} from "next/navigation";
 import {useActions} from "../../hooks/actions";
-import {useGetTable1Query} from "../../redux/features/table.api";
-import {useAppSelector} from "../../hooks/redux";
 
 const Table = () => {
-    const {table, getTable, clearLoginResult} = useAppStore();
     const LIMIT = 10;
-    let [offset, setOffset] = useState(0)
-    let [pageNumber, setPageNumber] = useState(1);
+    const [offset, setOffset] = useState(0)
+    const [pageNumber, setPageNumber] = useState(1);
+    const { data: table, refetch } = useGetTableQuery([String(LIMIT), String(offset)], { refetchOnMountOrArgChange: true });
+
     let countOfPages = table ? table?.count && Math.ceil(table?.count / LIMIT) : 0;
-    let [existUser, setExistRow] = useState((typeof window !== 'undefined') && localStorage.getItem('user') || null)
-    // const router = useRouter();
+    const [existUser, setExistRow] = useState((typeof window !== 'undefined') && localStorage.getItem('user') || null)
+    const router = useRouter();
     const [openModal, setOpenModal] = useState(false)
     const [currentRow, setCurrentRow] = useState(null)
-
-
+    const {clearLoginResult} = useActions();
 
     const handlePageChange = (event, value) => {
         setPageNumber(value);
+        refetch(LIMIT, String(LIMIT * (value) - LIMIT) );
         setOffset(LIMIT * (value) - LIMIT)
     }
 
     const handleClearLoginResult = () => {
-        if (typeof window !== 'undefined') {localStorage.removeItem('user');}
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('user');
+        }
         clearLoginResult();
-        setExistRow( (typeof window !== 'undefined') && localStorage.getItem('user'));
+        setExistRow((typeof window !== 'undefined') && localStorage.getItem('user'));
     }
 
     const handleOpenModal = () => {
         setOpenModal(true);
     }
 
-    const handleOpenEditModal = (user) => {
+    const handleOpenEditModal = (cell) => {
         setOpenModal(true)
-        setCurrentRow(user)
+        setCurrentRow(cell)
     }
 
     useEffect(() => {
-        getTable(String(LIMIT), String(offset))
-    }, [pageNumber, offset, openModal]);
-
-
-    const {data: table1} = useGetTable1Query(String(LIMIT), String(offset), {refetchOnMountOrArgChange: true})
-    const {setTable} = useActions()
-    setTable(table1)
-    // const myTable = useAppSelector((state) => state.data.table);
-    // console.log('myTable', myTable)
-
-
-    // useEffect(() => {
-    //     if (!existUser) router.push('/')
-    // }, [existUser]);
+        if (!existUser) router.push('/')
+    }, [existUser]);
 
     return (
         <main className='table'>
-            {table?.count
+            {existUser && table?.count
                 ? <>
                     <div className='table__top'>
                         <h1 className='table__title'>Table</h1>

@@ -2,8 +2,12 @@ import React, {useEffect, useState} from 'react';
 import './Modal.scss'
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import {TextValidator, ValidatorForm} from "react-material-ui-form-validator";
-import {useAppStore} from "../lib/store/store";
 import {IRow} from "../models/interfaces";
+import {
+    useAddRowMutation,
+    useEditRowMutation,
+} from "../redux/features/table.api";
+import {useActions} from "../hooks/actions";
 
 interface IModalProps {
     setOpenModal: (isOpenModal: boolean) => void,
@@ -12,7 +16,10 @@ interface IModalProps {
 }
 
 const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}) => {
-    const {row, addRow, clearRow, editRow} = useAppStore();
+    const [editRow] = useEditRowMutation({refetchOnMountOrArgChange: true});
+    const [addRow] = useAddRowMutation({refetchOnMountOrArgChange: true});
+    const {clearRow} = useActions();
+    const [errorMessage, setErrorMessage] = useState({});
 
     const initialRow = currentRow || {
         name: '',
@@ -21,7 +28,6 @@ const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}
         phone_number: '',
         address: '',
     }
-
     const [newRow, setNewRow] = useState(initialRow);
 
     const handleCloseModal = () => {
@@ -31,27 +37,32 @@ const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}
         setCurrentRow(null);
     }
 
-    const addNewRow = async (event) => {
-        event.preventDefault();
-        addRow(newRow);
-    }
-
-    const editExistRow = async (event) => {
-        event.preventDefault();
-        editRow(currentRow.id, newRow);
-    }
-
-    useEffect(() => {
-        if (row?.name === newRow.name) {
+    const reloadPage = (result) => {
+        if (!result?.error) {
             setOpenModal(false);
             setNewRow(initialRow)
             clearRow();
             setCurrentRow(null);
+            location.reload();
+        } else {
+            setErrorMessage(result.error.data)
         }
-    }, [row]);
+    }
+
+    const addNewRow = async (event) => {
+        event.preventDefault();
+        const result = await addRow(newRow);
+        reloadPage(result);
+    }
+
+    const editExistRow = async (event) => {
+        event.preventDefault();
+        const result = await editRow(newRow);
+        reloadPage(result);
+    }
 
     useEffect(() => {
-        currentRow && setNewRow(currentRow);
+        if (currentRow) {setNewRow(currentRow)}
     }, [currentRow]);
 
     return (
@@ -80,7 +91,7 @@ const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}
                                 validators={['required', 'maxStringLength:255']}
                                 errorMessages={['Required field.', 'Max length is 255 characters.']}
                             />
-                            {row?.name?.[0] && <p className='modal__error'>{row?.name?.[0]}</p>}
+                            {errorMessage['name'] && <p className='modal__error'>{errorMessage['name']}</p>}
                         </div>
 
                         <div className='modal__inputs-item'>
@@ -94,7 +105,7 @@ const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}
                                 validators={['required']}
                                 errorMessages={['Required field.']}
                             />
-                            {row?.birthday_date?.[0] && <p className='modal__error'>{row?.birthday_date?.[0]}</p>}
+                            {errorMessage['birthday_date'] && <p className='modal__error'>{errorMessage['birthday_date']}</p>}
                         </div>
 
                         <div className='modal__inputs-item'>
@@ -108,7 +119,7 @@ const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}
                                 validators={['required', 'isEmail', 'maxStringLength:254']}
                                 errorMessages={['Required field.', 'This is not a valid email.', 'Max length is 254 characters.']}
                             />
-                            {row?.email?.[0] && <p className='modal__error'>{row?.email?.[0]}</p>}
+                            {errorMessage['email'] && <p className='modal__error'>{errorMessage['email']}</p>}
                         </div>
 
                         <div className='modal__inputs-item'>
@@ -122,7 +133,7 @@ const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}
                                 validators={['required']}
                                 errorMessages={['Required field.']}
                             />
-                            {row?.address?.[0] && <p className='modal__error'>{row?.address?.[0]}</p>}
+                            {errorMessage['address'] && <p className='modal__error'>{errorMessage['address']}</p>}
                         </div>
 
                         <div className='modal__inputs-item'>
@@ -139,7 +150,7 @@ const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}
                                 validators={['required', 'maxStringLength:20']}
                                 errorMessages={['Required field.', 'Max length is 20 characters.']}
                             />
-                            {row?.phone_number?.[0] && <p className='modal__error'>{row?.phone_number?.[0]}</p>}
+                            {errorMessage['phone_number'] && <p className='modal__error'>{errorMessage['phone_number']}</p>}
                         </div>
                     </div>
                 </DialogContent>
@@ -158,9 +169,7 @@ const Modal: React.FC<IModalProps> = ({ setOpenModal, currentRow, setCurrentRow}
                     </Button>
                 </DialogActions>
             </ValidatorForm>
-
         </Dialog>
-
     );
 };
 
